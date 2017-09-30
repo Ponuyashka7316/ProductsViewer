@@ -4,6 +4,7 @@
              xmlns:local="clr-namespace:ProductsViewer"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
-         
+        <DataTemplate x:Key="PhotoItemTemplate">
+        </DataTemplate>
     </Application.Resources>
 </Application>

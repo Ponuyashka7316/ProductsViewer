@@ -12,6 +12,9 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Data;
+using System.Data.SqlClient;
+
 
 namespace ProductsViewer
 {
@@ -22,7 +25,39 @@ namespace ProductsViewer
     {
         public MainWindow()
         {
-            InitializeComponent();
+           // InitializeComponent();
         }
+        private void OnLoaded(object sender, RoutedEventArgs e)
+        {
+            string advworksConnectionString =
+"server=localhost;async=true;integrated security=true;database=AdventureWorks;";
+            SqlConnection advworksConnection = new SqlConnection(advworksConnectionString);
+            advworksConnection.Open();
+            SqlDataAdapter adapter = new SqlDataAdapter();
+            adapter.SelectCommand = new SqlCommand
+            ("SELECT LargePhotoFileName FROM Production.ProductPhoto WHERE "
+            + "ProductPhotoID <= 100", advworksConnection);
+            DataSet dataSet = new DataSet();
+            adapter.Fill(dataSet, "PhotoList");
+            productsListBox.DataContext = dataSet;
+
+        }
+
+        private void GetPhoto(object sender, SelectionChangedEventArgs args)
+        {
+            string photoFileName;
+            object selected = productsListBox.SelectedItem;
+            DataRow row = ((DataRowView)selected).Row;
+            photoFileName = row.ItemArray[0].ToString();
+            BitmapImage bi = new BitmapImage();
+            bi.BeginInit();
+            bi.UriSource = new Uri(@"E:\Labfiles\Images\" + photoFileName);
+            bi.EndInit();
+            productImage.Source = bi;
+
+        }
+
+
+
     }
 }
